@@ -32,12 +32,19 @@ const socialLinks = [
 
 export default function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
-  const [isDark, setIsDark] = useState(false)
+  const [isDark, setIsDark] = useState(() => window.matchMedia('(prefers-color-scheme: dark)').matches)
 
   useEffect(() => {
     const fn = () => setIsMobile(window.innerWidth <= 768)
     window.addEventListener('resize', fn)
     return () => window.removeEventListener('resize', fn)
+  }, [])
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const fn = (e) => setIsDark(e.matches)
+    mq.addEventListener('change', fn)
+    return () => mq.removeEventListener('change', fn)
   }, [])
 
   useEffect(() => {

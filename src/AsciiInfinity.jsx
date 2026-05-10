@@ -34,11 +34,29 @@ export default function AsciiInfinity({ w = 121, h = 55, k1 = 52.8 }) {
       lastX = e.clientX
       lastY = e.clientY
     }
+    const onTouchStart = (e) => {
+      isDragging = true
+      lastX = e.touches[0].clientX
+      lastY = e.touches[0].clientY
+    }
+    const onTouchEnd = () => { isDragging = false }
+    const onTouchMove = (e) => {
+      if (!isDragging) return
+      const dx = e.touches[0].clientX - lastX
+      const dy = e.touches[0].clientY - lastY
+      rotY += dx * 0.01
+      rotX += dy * 0.01
+      lastX = e.touches[0].clientX
+      lastY = e.touches[0].clientY
+    }
     const onKeyDown = (e) => { if (e.code === 'Space') { e.preventDefault(); paused = !paused } }
 
     window.addEventListener('mousedown', onMouseDown)
     window.addEventListener('mouseup', onMouseUp)
     window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('touchstart', onTouchStart)
+    window.addEventListener('touchend', onTouchEnd)
+    window.addEventListener('touchmove', onTouchMove)
     window.addEventListener('keydown', onKeyDown)
 
     function tick() {
@@ -111,6 +129,9 @@ export default function AsciiInfinity({ w = 121, h = 55, k1 = 52.8 }) {
       window.removeEventListener('mousedown', onMouseDown)
       window.removeEventListener('mouseup', onMouseUp)
       window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('touchstart', onTouchStart)
+      window.removeEventListener('touchend', onTouchEnd)
+      window.removeEventListener('touchmove', onTouchMove)
       window.removeEventListener('keydown', onKeyDown)
       cancelAnimationFrame(frameRef.current)
     }
