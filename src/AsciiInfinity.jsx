@@ -35,13 +35,19 @@ export default function AsciiInfinity({ w = 121, h = 55, k1 = 52.8 }) {
       lastY = e.clientY
     }
     const onTouchStart = (e) => {
-      isDragging = true
-      lastX = e.touches[0].clientX
-      lastY = e.touches[0].clientY
+      const rect = el.getBoundingClientRect()
+      const touch = e.touches[0]
+      if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+          touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        isDragging = true
+        lastX = touch.clientX
+        lastY = touch.clientY
+      }
     }
     const onTouchEnd = () => { isDragging = false }
     const onTouchMove = (e) => {
       if (!isDragging) return
+      e.preventDefault()
       const dx = e.touches[0].clientX - lastX
       const dy = e.touches[0].clientY - lastY
       rotY += dx * 0.01
@@ -54,9 +60,9 @@ export default function AsciiInfinity({ w = 121, h = 55, k1 = 52.8 }) {
     window.addEventListener('mousedown', onMouseDown)
     window.addEventListener('mouseup', onMouseUp)
     window.addEventListener('mousemove', onMouseMove)
-    window.addEventListener('touchstart', onTouchStart)
-    window.addEventListener('touchend', onTouchEnd)
-    window.addEventListener('touchmove', onTouchMove)
+    window.addEventListener('touchstart', onTouchStart, { passive: true })
+    window.addEventListener('touchend', onTouchEnd, { passive: true })
+    window.addEventListener('touchmove', onTouchMove, { passive: false })
     window.addEventListener('keydown', onKeyDown)
 
     function tick() {
