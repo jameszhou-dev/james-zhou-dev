@@ -8,7 +8,7 @@ const R = 0.24
 const K2 = 5.2
 const ASPECT = 2.4
 
-export default function AsciiInfinity({ w = 121, h = 55, k1 = 52.8 }) {
+export default function AsciiInfinity({ w = 121, h = 55, k1 = 52.8, onSpeedChange, color, bold }) {
   const preRef = useRef(null)
   const frameRef = useRef(null)
 
@@ -22,6 +22,7 @@ export default function AsciiInfinity({ w = 121, h = 55, k1 = 52.8 }) {
     let paused = false
     let lastX = 0
     let lastY = 0
+    let speed = 0.006
 
     const onMouseDown = (e) => { isDragging = true; lastX = e.clientX; lastY = e.clientY }
     const onMouseUp = () => { isDragging = false }
@@ -55,7 +56,11 @@ export default function AsciiInfinity({ w = 121, h = 55, k1 = 52.8 }) {
       lastX = e.touches[0].clientX
       lastY = e.touches[0].clientY
     }
-    const onKeyDown = (e) => { if (e.code === 'Space') { e.preventDefault(); paused = !paused } }
+    const onKeyDown = (e) => {
+      if (e.code === 'Space') { e.preventDefault(); paused = !paused }
+      if (e.code === 'ArrowRight') { e.preventDefault(); speed = Math.min(speed + 0.003, 0.03); onSpeedChange?.(speed) }
+      if (e.code === 'ArrowLeft') { e.preventDefault(); speed = Math.max(speed - 0.003, -0.03); onSpeedChange?.(speed) }
+    }
 
     window.addEventListener('mousedown', onMouseDown)
     window.addEventListener('mouseup', onMouseUp)
@@ -66,7 +71,7 @@ export default function AsciiInfinity({ w = 121, h = 55, k1 = 52.8 }) {
     window.addEventListener('keydown', onKeyDown)
 
     function tick() {
-      if (!paused) rotY += 0.006
+      if (!paused) rotY += speed
 
       const cosX = Math.cos(rotX), sinX = Math.sin(rotX)
       const cosY = Math.cos(rotY), sinY = Math.sin(rotY)
@@ -152,8 +157,10 @@ export default function AsciiInfinity({ w = 121, h = 55, k1 = 52.8 }) {
         fontFamily: 'monospace',
         fontSize: '13px',
         lineHeight: '1.2',
+        fontWeight: bold ? 'bold' : 'normal',
         userSelect: 'none',
         pointerEvents: 'none',
+        color: color || undefined,
       }}
     />
   )
