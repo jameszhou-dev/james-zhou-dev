@@ -86,6 +86,10 @@
   color: var(--text);
 }
 
+.mobile-hints {
+  display: none;
+}
+
 .subtitle {
   font-size: 1rem;
 }
@@ -150,7 +154,15 @@
     pointer-events: none;
   }
 
-  .experiences {
+  .mobile-hints {
     order: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: -20px;
+  }
+
+  .experiences {
+    order: 3;
   }
 }
